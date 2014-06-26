@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import urllib
+import subprocess
+import socket
+import time
+
+# Number of pixels to read() at a time
+PIXBLOCK = 16 * 1024
+
+# Before we begin, let's note the hostname we're running on
+print '/* Running on host: %s */' % socket.gethostname()
+
+def getluminance(fp):
+	ppmver = fp.readline().strip()
+
+	if ppmver not in ('P5', 'P6'):
+		raise ValueError
+
+	x, y = [int(x) for x in fp.readline().strip().split()]
+	fp.readline()
+
+	# Remainder of file consists of 8-bit (r, g, b) 3-tuples.
+	# To get luminance we want to look at HSV space, not RGB.
+	# We can discard H and S; V is calculated as max(r, g, b).
+	# cf. http://www.rapidtables.com/convert/color/rgb-to-hsv.htm
+	sum = 0.0
+
+	while True:
+		data = fp.read(PIXBLOCK * 3)
+		n = len(data)
+		if n <= 0:
+			break
+
+		tmp = 0
+		for i in xrange(n/3):
+			off = i * 3
+			# luminance: max of r, g, b
+			tmp += max([ord(v) for v in data[off:off+3]])
+		sum += float(tmp) / 256.0
+
+	return sum / float(x * y)
+
+	# This is much slower but perhaps illustrates the algo better
+	for rgb in xrange(x * y):
+		rgb = fp.read(3)
+		lum = max([ord(v) for v in rgb])
+		lum = float(lum) / 256.0
+		sum += lum
+	return sum / float(x * y)
+
+
+starttime = time.time()
+
+start = int(sys.argv[1])
+distance = int(sys.argv[2])
+
+for n in xrange(start):
+	sys.stdin.readline()
+
+count = 0
+for line in sys.stdin:
+	count += 1
+
+	line = line.strip()
+	url, year = line.split()
+
+	if url.startswith('http:') or url.startswith('https:'):
+		fp = urllib.urlopen(url)
+	elif url.startswith('file://'):
+		url = url[7:]
+		fp = open(url, 'r')
+	else:
+		fp = open(url, 'r')
+
+	tmpfp = os.popen('./djpeg >tmp.x', 'w')
+	while True:
+		data = fp.read()
+		if len(data) <= 0:
+			break
+		tmpfp.write(data)
+	tmpfp.close()
+	fp.close()
+
+	fp = open('tmp.x', 'r')
+	l = getluminance(fp)
+	fp.close()
+	os.unlink('tmp.x')
+
+	# write analysis in javascript format, for direct intake by grapher
+	print '[%s, %f],' % (year, l)
+
+	if count >= distance:
+		break
+
+t = time.time() - starttime
+print '/* %d photos analyzed in %.2fs (%.2f/s) */' % (count, t, t/float(count))

@@ -1,0 +1,18 @@
+        ]);
+
+        var options = {
+          title: 'Photograph Archive: Year vs. Luminance',
+          hAxis: {title: 'Year Created', minValue: 1860, maxValue: 2000},
+          vAxis: {title: 'Luminance', minValue: 0.0, maxValue: 0.8},
+          legend: 'none'
+        };
+
+        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 1000px; height: 600px;"></div>
+  </body>
+</html>
