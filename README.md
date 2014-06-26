@@ -6,8 +6,8 @@ In this tutorial you will perform a very simple distributed analysis of approxim
 Source files will be retrieved on the fly over HTTP from Stash, the OSG Connect storage service. Results will be saved into Stash and made viewable in a web browser.
 Login to OSG Connect
 --------------------
-    *If not already registered to OSG Connect, go to the [registration site](https://osgconnect.net) and follow instructions there.
-    *Once registered, you are authorized to use **login.osgconnect.net** (the Condor submit host) and **stash.osgconnect.net** (the data host), in each case authenticating with your network ID (**netid**) and password:
+  *If not already registered to OSG Connect, go to the [registration site](https://osgconnect.net) and follow instructions there.
+  *Once registered, you are authorized to use **login.osgconnect.net** (the Condor submit host) and **stash.osgconnect.net** (the data host), in each case authenticating with your network ID (**netid**) and password:
 ```
 $ ssh netid@login.osgconnect.net
 ```
@@ -15,10 +15,10 @@ Set up the tutorial
 -------------------
 This tutorial depends on several files that we have set up in advance:
 
-    +**manifest.txt** - a prearranged input file associating the URL of a photo with the year it was taken
-    +**djpeg** - a statically compiled executable to decode a JPEG file into PNM format (a simple array of RGB color values)
-    +**luminance** - a Python program that selects a specified subset of the manifest, downloads the image over HTTP, runs it through DJPEG, and computes average luminance over the whole image
-    +**scatter_pre.html** and **scatter_post.html** - HTML snippets that sandwich [year, luminance] tuples to produce a complete HTML file to plot the data using Google Charts.
+  +**manifest.txt** - a prearranged input file associating the URL of a photo with the year it was taken
+  +**djpeg** - a statically compiled executable to decode a JPEG file into PNM format (a simple array of RGB color values)
+  +**luminance** - a Python program that selects a specified subset of the manifest, downloads the image over HTTP, runs it through DJPEG, and computes average luminance over the whole image
+  +**scatter_pre.html** and **scatter_post.html** - HTML snippets that sandwich [year, luminance] tuples to produce a complete HTML file to plot the data using Google Charts.
 
 Because these inputs and programs are not easy to type, the tutorial is available only using the tutorial command. Let's set up the photodemo tutorial:
 ```
@@ -35,8 +35,8 @@ Prepare and run the job
 
 When you have one large collection of inputs to distribute over many job slots, you can take either of two approaches:
 
-    *break the input into many smaller inputs, and send a different input to each job instance;
-    *send the whole input set with each job, but configure the job to perform its own selection on the input.
+  *break the input into many smaller inputs, and send a different input to each job instance;
+  *send the whole input set with each job, but configure the job to perform its own selection on the input.
      
     To optimize performance over many thousands of jobs at slight expense to storage, the first approach is often better. For this tutorial, because the inputs are relatively few (~5500) – and in order to keep file management to a minimum – we will take the second approach. Each enqueued job will take the same input (manifest.txt), and its command line arguments will tell it which rows to work on. To produce a submit file with so many differing parameters, we have a shell script that outputs a Condor submit file.
      
@@ -90,8 +90,8 @@ Note: project names are case sensitive.
 
 You have two ways to set the project name for your jobs:
 
-    1.Add the +ProjectName="MyProject" line to the HTCondor submit file. **Remember to quote the project name!**
-    2.Use the connect project command to select a default project for all your work.
+  1.Add the +ProjectName="MyProject" line to the HTCondor submit file. **Remember to quote the project name!**
+  2.Use the connect project command to select a default project for all your work.
 
 Remember: if you do not set a project name, or you use a project that you're not a member of, then your job submission will fail.
 
@@ -207,9 +207,9 @@ You can see much more information about your job's final status using the -long 
 
 Once your job has finished, you can look at the files that HTCondor has returned to the working directory. If everything was successful, it should have returned:
 
-    +a log file from Condor for the job cluster: job.log
-    +an output file for each job's output: log/job.output.*
-    +an error file for each job's errors: log/job.error.*
+  +a log file from Condor for the job cluster: job.log
+  +an output file for each job's output: log/job.output.*
+  +an error file for each job's errors: log/job.error.*
 
 ##### Where did jobs run?
 
