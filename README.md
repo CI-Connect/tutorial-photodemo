@@ -52,7 +52,7 @@ When you have one large collection of inputs to distribute over many job slots, 
 ```
 ##### Test the job locally
 
-When setting up a new job type, it's important to **test your job outside of Condor* before submitting into the grid. Here is what a quick run over five photos would look like when it executes on a worker:
+When setting up a new job type, it's important to **test your job outside of Condor** before submitting into the grid. Here is what a quick run over five photos would look like when it executes on a worker:
 ```
 $ ./luminance 0 5 <manifest.txt 
 /* Running on host: login01.osgconnect.net */
@@ -86,7 +86,7 @@ access to:
 ConnectTrain
 OSG-Staff
 ```
-You can join projects after you login at https://osgconnect.net/project-summary . Within minutes of joining and being approved for a project, you will have access via condor_submit as well. To define a new project, see [the ConnectBook section for Principal Investigators](https://confluence.grid.iu.edu/display/CON/Start+a+Project+with+OSG+Connect "Start a Project with OSG Connect").
+You can join projects after you login at https://osgconnect.net/project-summary. Within minutes of joining and being approved for a project, you will have access via condor_submit as well. To define a new project, see [the ConnectBook section for Principal Investigators](https://confluence.grid.iu.edu/display/CON/Start+a+Project+with+OSG+Connect "Start a Project with OSG Connect").
  
 Note: project names are case sensitive.
 
