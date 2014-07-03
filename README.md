@@ -64,20 +64,9 @@ $ ./luminance 0 5 <manifest.txt
 /* 5 photos analyzed in 6.94s (1.39/s) */
 ```
 This works, so we can feel comfortable scaling up.
-##### Choose the Project Name
 
-It is very important to set a project name using the +ProjectName = "project" parameter. A job without a ProjectName will fail with a message like:
-```
-No ProjectName ClassAd defined!
-Please record your OSG project ID in your submit file.
-  Example:  +ProjectName = "OSG-CO1234567"
-
-Based on your username, here is a list of projects you might have 
-access to:
-ConnectTrain
-OSG-Staff
-```
-To see the projects you belong to, you can use the command connect show-projects:
+##### Project Names
+You can also set a project name using the +ProjectName = "project" parameter. To see the projects you belong to, you can use the command connect show-projects:
  
 ```
 $ connect show-projects
@@ -86,16 +75,12 @@ access to:
 ConnectTrain
 OSG-Staff
 ```
-You can join projects after you login at https://osgconnect.net/project-summary. Within minutes of joining and being approved for a project, you will have access via condor_submit as well. To define a new project, see [the ConnectBook section for Principal Investigators](https://confluence.grid.iu.edu/display/CON/Start+a+Project+with+OSG+Connect "Start a Project with OSG Connect").
- 
-Note: project names are case sensitive.
+You can join projects after you login at https://osgconnect.net/project-summary. Within minutes of joining and being approved for a project, you will have access via condor_submit as well. To define a new project, see [the ConnectBook section for Principal Investigators](https://confluence.grid.iu.edu/display/CON/Start+a+Project+with+OSG+Connect "Start a Project with OSG Connect"). Project names are also case sensitive.
 
 You have two ways to set the project name for your jobs:
 
   1. Add the +ProjectName="MyProject" line to the HTCondor submit file. **Remember to quote the project name!**
   2. Use the connect project command to select a default project for all your work.
-
-Remember: if you do not set a project name, or you use a project that you're not a member of, then your job submission will fail.
 
 ##### Submit the job
 
