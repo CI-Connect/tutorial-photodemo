@@ -5,9 +5,9 @@ In this tutorial you will perform a very simple distributed analysis of approxim
 
 Goals for this tutorial:
 
-1. using the HTTP file service on Stash to store and retrieve data
-2. storing results into Stash for quick visualization of results in a web browser
-3. creating a Python "virtualenv" to distribute custom Python libraries across the grid with your job
+1. use the HTTP file service on Stash to store and retrieve data
+2. store results into Stash for quick visualization of results in a web browser
+3. create a Python "virtualenv" to distribute custom Python libraries across the grid with your job
 
 
 Login to OSG Connect
