@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import urllib
+import subprocess
+import socket
+import time
+import StringIO
+import math
+
+from PIL import Image, ImageStat
+
+def getLuminance(image):
+	# http://stackoverflow.com/questions/3490727/what-are-some-methods-to-analyze-image-brightness-using-python
+
+	stat = ImageStat.Stat(image)
+	rms = stat.rms
+	if len(rms) == 1:
+		return rms[0] / 256.0
+	else:
+		r, g, b = rms
+		# "perceived brightness", c.f.
+		# http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+		return math.sqrt(0.241*(r**2) + 0.691*(g**2) + 0.068*(b**2)) / 256.0
+
+
+def getImage(url):
+	if url.startswith('http:') or url.startswith('https:'):
+		fp = urllib.urlopen(url)
+		data = StringIO.StringIO(fp.read())
+		fp.close()
+		return Image.open(data)
+
+	elif url.startswith('file://'):
+		file = url[7:]
+		return Image.open(file)
+
+	else:
+		return Image.open(url)
+
+
+# Read arguments
+output = sys.argv[1]
+start = int(sys.argv[2])
+distance = int(sys.argv[3])
+
+# Create our output file
+outfp = open(output, 'w')
+
+# Before we begin, let's note the hostname we're running on
+print >>outfp, '/* Running on host: %s */' % socket.gethostname()
+
+starttime = time.time()
+
+for n in xrange(start):
+	# Read past lines we're asked to skip
+	sys.stdin.readline()
+
+count = 0
+for line in sys.stdin:
+	count += 1
+
+	line = line.strip()
+	url, year = line.split()
+
+	image = getImage(url)
+	l = getLuminance(image)
+
+	# write analysis in javascript format, for direct intake by grapher
+	print >>outfp, '[%s, %f],' % (year, l)
+
+	if count >= distance:
+		break
+
+t = time.time() - starttime
+print >>outfp, '/* %d photos analyzed in %.2fs (%.2f/s) */' % (count, t, t/float(count))
+outfp.close()

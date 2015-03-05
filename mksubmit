@@ -6,12 +6,12 @@ Universe = vanilla
 
 # EXECUTABLE is the program your job will run It's often useful 
 # to create a shell script to "wrap" your actual work. 
-Executable = luminance
+Executable = run.sh
 
 # ERROR and OUTPUT are the error and output channels from your job
 # that HTCondor returns from the remote host.
-Error = log/job.error.$(Cluster)-$(Process) 
-Output = log/job.output.$(Cluster)-$(Process) 
+Error = log/job.error.$(Cluster).$(Process) 
+Output = log/job.output.$(Cluster).$(Process) 
 
 # The LOG file is where HTCondor places information about your 
 # job's status, success, and resource consumption. 
@@ -20,25 +20,24 @@ Log = job.log
 # Read job stdin from here:
 Input = manifest.txt
 
-# We need this exec to decode the JPEG files into RGB 3-tuples. Ideally
-# we might include a python module for it, but this is a simple demo.
-# djpeg is compiled statically for portability across platforms.
-Transfer_input_files = djpeg
+# Bundle the virtualenv library that we created
+Transfer_Input_files = luminance2, pillow.tar
 
 # QUEUE is the "start button" - it launches any jobs that have been 
 # specified thus far. 
 #Queue 1
 EOF
 
-# We have about 5500 photos to analyze. Block them off by 200s and
-# submit enough jobs to handle.
+# We have about 5500 photos to analyze. Block them off by groups of 200,
+# and submit enough jobs to handle all of them.
 chunk=${1-200}
 max=${2-5600}
 
 i=0
 while [ $i -lt $max ]; do
-	echo Arguments = $i $chunk
-	echo Queue 1
+	echo "Transfer_Output_Files = results-$i.json"
+	echo "Arguments = results-$i.json $i $chunk"
+	echo "Queue 1"
 	echo
 	i=$(($i + $chunk))
 done
