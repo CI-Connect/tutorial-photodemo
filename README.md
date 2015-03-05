@@ -60,8 +60,7 @@ Now your virtualenv is ready to populate with your custom Python modules. Let's 
 
 ```
 	# Find and copy into place the virtualenv software
-	$ cp $(python -c 'import virtualenv;
-	                  print virtualenv.__file__' |
+	$ cp $(python -c 'import virtualenv; print virtualenv.__file__' |
            sed -e 's/pyc/py/') pillow/bin/
     $ cp $(which virtualenv) pillow/bin/
 
