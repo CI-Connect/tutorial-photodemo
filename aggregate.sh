@@ -1,3 +1,3 @@
 #!/bin/sh
 
-cat scatter_pre.html results*.json scatter_post.html > results.html
+cat scatter_pre.html results*.json scatter_post.html
