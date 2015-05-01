@@ -2,7 +2,7 @@
 
 # This is a simple job wrapper to unpack the python virtual environment
 # and run the 'luminance2' program, saving output into a results file.
-
+module load python
 # Unpack the pillow.tar virtualenv which was bundled with the job
 tar xf pillow.tar
 
