@@ -23,7 +23,7 @@ Input = manifest.txt
 # Bundle the virtualenv library that we created
 Transfer_Input_files = luminance2, pillow.tar
 
-request_memory = 1GB
+request_memory = 1 GB
 
 # QUEUE is the "start button" - it launches any jobs that have been 
 # specified thus far. 
