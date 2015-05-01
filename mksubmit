@@ -23,7 +23,9 @@ Input = manifest.txt
 # Bundle the virtualenv library that we created
 Transfer_Input_files = luminance2, pillow.tar
 
-request_memory = 1 GB
+request_memory = 2 GB
+requirements = (HAS_CVMFS_oasis_opensciencegrid_org =?= TRUE)
+
 
 # QUEUE is the "start button" - it launches any jobs that have been 
 # specified thus far. 
