@@ -1,5 +1,5 @@
 #!/bin/bash
-
+module load python/3.4
 # Create the virtualenv
 virtualenv pillow
 
