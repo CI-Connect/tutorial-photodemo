@@ -2,12 +2,20 @@
 
 # This is a simple job wrapper to unpack the python virtual environment
 # and run the 'luminance2' program, saving output into a results file.
-module load python/3.4
+
+# If no HTTP_PROXY but FRONTIER_PROXY is set, copy it. At some
+# sites (notably Syracuse) this helps ensure HTTP access to the internet.
+[ -z "$HTTP_PROXY" -a -n "$FRONTIER_PROXY" ] && export HTTP_PROXY=${FRONTIER_PROXY}
+
+# First load a python 2.7 interpreter from OASIS.
+module load python/2.7
+
 # Unpack the pillow.tar virtualenv which was bundled with the job
 tar xf pillow.tar
 
 # Update it to run on this worker
-python pillow/bin/virtualenv.py pillow
+#python pillow/bin/virtualenv.py pillow
+virtualenv pillow
 
 # Activate the virtualenv to get access to its local modules
 source pillow/bin/activate
