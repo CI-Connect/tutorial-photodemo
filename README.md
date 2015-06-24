@@ -48,32 +48,31 @@ The key to Python library bundling is a program called **virtualenv**.  This pro
 
 Let's create a new virtualenv named `pillow`.  Enter the following command at your `login.osgconnect.net` command prompt:
 
-		# Create the virtualenv
-		$ virtualenv pillow
+	# Create the virtualenv
+	$ virtualenv pillow
 
 ##### Populate the virtualenv with Python code
 
 Now your virtualenv is ready to populate with your custom Python modules. Let's do that.  First we will add the `virtualenv` command itself to the environment, because we'll need it again on each worker node:
 
-		# Find and copy into place the virtualenv software
-		$ cp $(python -c 'import virtualenv; print virtualenv.__file__' |
-	           sed -e 's/pyc/py/') pillow/bin/
-	    $ cp $(which virtualenv) pillow/bin/
+	# Find and copy into place the virtualenv software
+	$ cp $(python -c 'import virtualenv; print virtualenv.__file__' | sed -e 's/pyc/py/') pillow/bin/
+	$ cp $(which virtualenv) pillow/bin/
 	
-		# "activate" the virtualenv
-		$ source pillow/bin/activate
+	# "activate" the virtualenv
+	$ source pillow/bin/activate
 	
-		# Install PIL. The STATIC_DEPS variable uses static libraries for any compiled dependencies
-		$ env STATIC_DEPS=true pip install Pillow
+	# Install PIL. The STATIC_DEPS variable uses static libraries for any compiled dependencies
+	$ env STATIC_DEPS=true pip install Pillow
 	
-		# Now "deactivate" the virtualenv
-		$ deactivate
+	# Now "deactivate" the virtualenv
+	$ deactivate
 
 ##### Bundle the environment
 
 That should complete the virtual environment setup.  Let's create a single-file "tarball" to bundle it for job distribution:
 
-		$ tar cf pillow.tar pillow
+	$ tar cf pillow.tar pillow
 
 
 
@@ -98,6 +97,7 @@ This works, so we can feel comfortable scaling up.
 ##### Write a job wrapper to unbundle the virtualenv
 
 Our test worked, but wait -- clearly PIL is installed on `login.osgconnect.net`, but we don't trust that it will be installed anywhere else on the grid.  Indeed if you were to submit this job as above, it would fail spectacularly: probably none of the queued jobs would succeed.  So we need to unbundle that virtualenv we created. To do that we create a job wrapper named `run.sh`.  That file already exists so that you don't need to write it, but let's study it a moment:
+
 	#!/bin/bash
 		
 	# This is a simple job wrapper to unpack the python virtual environment
@@ -118,6 +118,7 @@ Our test worked, but wait -- clearly PIL is installed on `login.osgconnect.net`,
 	#
 	# Use "$@" to pass whatever arguments came into this script.
 	python luminance2 "$@"
+	
 This script is the "glue" we need to sequence the unbundling of the virtualenv (`tar`), the reconfiguration of the environment (`python .../virtualenv.py pillow`), the activation of the virtualenv (`source .../activate`) and the execution of the actual code.
 
 
@@ -132,10 +133,10 @@ To optimize performance over many thousands of jobs at slight expense to storage
      
 Run `mksubmit` to create a submit file. By default each resulting job will analyze 200 photos, so the job cluster uses about 28 slots. You can change the size of the cluster by chunking with a different value.
      
-	    # Use 28 slots of 200 photos each
-	    $ ./mksubmit 200 >submit.sub
-	    # Or use 56 slots of 100 photos each
-	    $ ./mksubmit 100 >submit.sub
+	# Use 28 slots of 200 photos each
+	$ ./mksubmit 200 >submit.sub
+	# Or use 56 slots of 100 photos each
+	$ ./mksubmit 100 >submit.sub
 
 ##### Project Names
 Remember that all jobs running in the OSG need to have a project name assigned. To see the projects you belong to, you can use the command connect show-projects:
@@ -154,12 +155,15 @@ One of these will be the "default project" that all your jobs run under. You hav
 ##### Submit the job
 
 Submit the job using condor_submit.
+
 	$ condor_submit submit.sub 
 	Submitting job(s)............................
 	28 job(s) submitted to cluster 181587.
+
 ##### Monitor job status
 
 The condor_q command tells the status of currently running jobs. Generally you will want to limit it to your own jobs by giving it your own username:
+
 	$ condor_q netid
 	-- Submitter: login01.osgconnect.net : <192.170.227.195:56133> : login01.osgconnect.net
 	 ID      OWNER            SUBMITTED     RUN_TIME ST PRI SIZE CMD               
@@ -219,6 +223,7 @@ Assess results
 ##### Job history
 
 Once your job has finished, you can get information about its execution from the condor_history command:
+
 	$ condor_history 2710704
 	ID     OWNER          SUBMITTED   RUN_TIME     ST COMPLETED   CMD            
 	2710704.9   netid           3/5  14:13   0+00:03:15 C   3/5  14:18 /home/netid/tutorial-photodemo/run
@@ -265,30 +270,33 @@ Once your job has finished, you can look at the files that HTCondor has returned
 
 It is interesting and sometimes useful to see where on the grid your jobs are running. Two `connect` commands are useful for this. `connect histogram` displays a distribution of resources in use by your current jobs – it is analogous to `condor_q`. `connect histogram --last` shows the same information for your previous job cluster, based on `condor_history`.
  
- ```
-$ connect histogram --last
-Val          |Ct (Pct)     Histogram
-amazonaws.com|28 (100.00%) ████████████████████████████████████████████████████▏
+
+	$ connect histogram --last
+	Val          |Ct (Pct)     Histogram
+	amazonaws.com|28 (100.00%) ████████████████████████████████████████████████████▏
+	
 	In this instance, all jobs ran in the Amazon cloud, where a few nodes are provisioned for this tutorial session.
-$ connect historygram --last
-Val          |Ct (Pct)    Histogram
-amazonaws.com|30 (53.57%) █████████████████████████████████████████████████████▏
-unl.edu      |20 (35.71%) ███████████████████████████████████▍
-ucdavis.edu  |2 (3.57%)   ███▋
-mwt2.org     |2 (3.57%)   ███▋
-cinvestav.mx |1 (1.79%)   █▉
-vt.edu       |1 (1.79%)   █▉
+
+	$ connect historygram --last
+	Val          |Ct (Pct)    Histogram
+	amazonaws.com|30 (53.57%) █████████████████████████████████████████████████████▏
+	unl.edu      |20 (35.71%) ███████████████████████████████████▍
+	ucdavis.edu  |2 (3.57%)   ███▋
+	mwt2.org     |2 (3.57%)   ███▋
+	cinvestav.mx |1 (1.79%)   █▉
+	vt.edu       |1 (1.79%)   █▉
 	
-	In this later run, more jobs were submitted than Amazon had space for, so jobs also went out to UC Davis, Midwest Tier 2, UNL, and others.
+In this later run, more jobs were submitted than Amazon had space for, so jobs also went out to UC Davis, Midwest Tier 2, UNL, and others.
 	
-	(See our other tutorials for more details on job analysis options.)
+(See our other tutorials for more details on job analysis options.)
 	 
-	##### Gather outputs and plot the aggregated results
+##### Gather outputs and plot the aggregated results
 	
-	This job cluster has illustrated that jobs may grab files on demand via HTTP from Stash. Stash is also useful for quick result aggregation. As an example, try the following:
-		$ ./aggregate.sh >$HOME/stash/public/scatter.html
+This job cluster has illustrated that jobs may grab files on demand via HTTP from Stash. Stash is also useful for quick result aggregation. As an example, try the following:
+
+	$ ./aggregate.sh >$HOME/stash/public/scatter.html
 	 
-	Recall that this job writes results in JavaScript/JSON format. The scatter_pre.html and scatter_post.html files are designed to "wrap" those results, which may appear in any order since they're just unordered data points. This command is a really easy way to collect results into a usable file. Since $HOME/stash/public is exposed via HTTP, you may view the resulting plot directly at http://stash.osgconnect.net/+netid/scatter.html . Try clicking that link (which will give an error), then editing netid to your own username. View the HTML source if you like – you'll see how the job output was wrapped into the HTML sandwich, and find mildly interesting tidbits about job destinations and performance.
+Recall that this job writes results in JavaScript/JSON format. The scatter_pre.html and scatter_post.html files are designed to "wrap" those results, which may appear in any order since they're just unordered data points. This command is a really easy way to collect results into a usable file. Since $HOME/stash/public is exposed via HTTP, you may view the resulting plot directly at http://stash.osgconnect.net/+netid/scatter.html . Try clicking that link (which will give an error), then editing netid to your own username. View the HTML source if you like – you'll see how the job output was wrapped into the HTML sandwich, and find mildly interesting tidbits about job destinations and performance.
 	
-	## Getting Help
-	For assistance or questions, please email the OSG User Support team  at `user-support@opensciencegrid.org`, send a direct message via your twitter account to [@osgusers](http://twitter.com/osgusers), or visit the [help desk and community forums](http://support.opensciencegrid.org).
+## Getting Help
+For assistance or questions, please email the OSG User Support team  at `user-support@opensciencegrid.org`, send a direct message via your twitter account to [@osgusers](http://twitter.com/osgusers), or visit the [help desk and community forums](http://support.opensciencegrid.org).
