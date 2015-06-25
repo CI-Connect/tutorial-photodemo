@@ -1,5 +1,5 @@
-OSG Connect Tutorial: Photo Analysis Demo
-=========================================
+[title]: - "Photo Analysis Demo"
+
 
 In this tutorial you will perform a very simple distributed analysis of approximately 5,000 digitized images from a photograph archive that associates an XML metadata file with each photo. This job uses the Python Imaging Library (PIL) to convert each JPEG image into an array of RGB color space tuples, and from them find the average luminance of the entire image. The result of each computation will be a pairing of average luminance with the year that the photo was taken. Jobs will write these results in JavaScript/JSON format, so that the results of all jobs in aggregate can be used to submit raw data into the Google Charts API and produce a straightforward scatter plot.
 
